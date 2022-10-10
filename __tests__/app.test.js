@@ -11,7 +11,16 @@ afterAll(() => {
 beforeEach(() => {
   return seed(testData);
 });
-
+describe("invalid url", () => {
+  test("should return status 404 and a message saying Sorry can't find that!", () => {
+    return request(app)
+      .get("/api/lala")
+      .expect(404)
+        .then((msg) => {
+        expect(msg.text).toBe("Sorry can't find that!");
+      });
+  });
+});
 describe("GET /api/categories", () => {
   test("should return status 200 and an array of all categories", () => {
     return request(app)
