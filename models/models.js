@@ -10,7 +10,7 @@ exports.getCategoriesM = () => {
 exports.getReviewsByIdM = (id) => {
   return db
     .query(
-      `SELECT reviews.*, COUNT(comments) AS comment_count FROM reviews JOIN comments ON comments.review_id = reviews.review_id AND reviews.review_id = $1 GROUP BY reviews.review_id`,
+      `SELECT reviews.*, COUNT(comments) AS comment_count FROM reviews LEFT JOIN comments ON comments.review_id = reviews.review_id WHERE reviews.review_id = $1 GROUP BY reviews.review_id`,
       [id]
     )
     .then(({ rows: review }) => {
@@ -42,4 +42,27 @@ RETURNING  *;`,
       }
       return review[0];
     });
+};
+
+exports.getReviewsM = (category) => {
+  let mainQuery = `SELECT reviews.*, COUNT(comments) AS comment_count FROM reviews LEFT JOIN comments ON comments.review_id = reviews.review_id`;
+
+  if (category) {
+    mainQuery = mainQuery + ` WHERE reviews.category = $1`;
+  }
+
+  mainQuery += ` GROUP BY reviews.review_id ORDER BY created_at DESC`;
+
+  if (category) {
+    return db.query(mainQuery, [category]).then(({ rows: review }) => {
+      if (review.length === 0) {
+        return Promise.reject({ status: 404 });
+      }
+      return review;
+    });
+  }
+
+  return db.query(mainQuery).then(({ rows: review }) => {
+    return review;
+  });
 };
