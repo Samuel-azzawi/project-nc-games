@@ -27,7 +27,7 @@ exports.getUsersM = () => {
   });
 };
 
-exports.patchReviewVoteM = (id, votes = 1) => {
+exports.patchReviewVoteM = (id, votes = 0) => {
   return db
     .query(
       `UPDATE reviews

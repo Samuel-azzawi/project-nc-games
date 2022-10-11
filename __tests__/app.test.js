@@ -129,7 +129,7 @@ describe("PATCH /api/reviews/:review_id", () => {
         });
       });
   })
-  test("should return status 200 and the review with vote incremented by 1 (default) if no key was sent", () => {
+  test("should return status 200 and the review with vote incremented by 0 (default) if no key was sent", () => {
     return request(app)
       .patch("/api/reviews/4")
       .send()
@@ -147,7 +147,7 @@ describe("PATCH /api/reviews/:review_id", () => {
           review_img_url:
             "https://images.pexels.com/photos/278918/pexels-photo-278918.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
           created_at: "2021-01-22T11:35:50.936Z",
-          votes: 8,
+          votes: 7,
         });
       });
   });
