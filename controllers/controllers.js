@@ -26,10 +26,9 @@ exports.getReviewsByIdC = (req, res, next) => {
 };
 
 exports.getUsersC = (req, res, next) => {
-  console.log("hi")
   getUsersM()
     .then((users) => {
-      res.status(200).send(users);
+      res.status(200).send({users});
     })
     .catch((err) => {
       next(err);

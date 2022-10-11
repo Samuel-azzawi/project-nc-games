@@ -91,10 +91,8 @@ describe("GET /api/users", () => {
       .get("/api/users")
       .expect(200)
       .then((res) => {
-        const { body: categories } = res;
-        console.log(categories)
-        expect(Array.isArray(categories)).toBeTruthy();
-        categories.forEach((index) => {
+        const { body: userObj } = res;
+        userObj.users.forEach((index) => {
           expect(index).toEqual(
             expect.objectContaining({
               username: expect.any(String),
