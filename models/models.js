@@ -9,7 +9,10 @@ exports.getCategoriesM = () => {
 
 exports.getReviewsByIdM = (id) => {
   return db
-    .query(`SELECT * FROM reviews WHERE review_id = $1;`, [id])
+    .query(
+      `SELECT reviews.*, COUNT(comments) AS comment_count FROM reviews JOIN comments ON comments.review_id = reviews.review_id AND reviews.review_id = $1 GROUP BY reviews.review_id`,
+      [id]
+    )
     .then(({ rows: review }) => {
       if (review.length === 0) {
         return Promise.reject({ status: 404 });
@@ -24,7 +27,7 @@ exports.getUsersM = () => {
   });
 };
 
-exports.patchReviewVoteM = (id, votes) => {
+exports.patchReviewVoteM = (id, votes = 1) => {
   return db
     .query(
       `UPDATE reviews
@@ -35,8 +38,8 @@ RETURNING  *;`,
     )
     .then(({ rows: review }) => {
       if (review.length === 0) {
-        return Promise.reject({status: 404})
+        return Promise.reject({ status: 404 });
       }
-      return review[0]
+      return review[0];
     });
 };
