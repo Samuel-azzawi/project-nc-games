@@ -104,3 +104,58 @@ describe("GET /api/users", () => {
       });
   });
 });
+
+describe("PATCH /api/reviews/:review_id", () => {
+  test('should return status 200 and the review with votes updated', () => { 
+    return request(app)
+      .patch("/api/reviews/4")
+      .send({ inc_votes: 1 })
+      .expect(200)
+      .then((res) => {
+        const review = res.body.review
+        expect(review).toEqual({
+          review_id: 4,
+          title: "Dolor reprehenderit",
+          category: "social deduction",
+          designer: "Gamey McGameface",
+          owner: "mallionaire",
+          review_body:
+            "Consequat velit occaecat voluptate do. Dolor pariatur fugiat sint et proident ex do consequat est. Nisi minim laboris mollit cupidatat et adipisicing laborum do. Sint sit tempor officia pariatur duis ullamco labore ipsum nisi voluptate nulla eu veniam. Et do ad id dolore id cillum non non culpa. Cillum mollit dolor dolore excepteur aliquip. Cillum aliquip quis aute enim anim ex laborum officia. Aliqua magna elit reprehenderit Lorem elit non laboris irure qui aliquip ad proident. Qui enim mollit Lorem labore eiusmod",
+          review_img_url:
+            "https://images.pexels.com/photos/278918/pexels-photo-278918.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+          created_at: "2021-01-22T11:35:50.936Z",
+          votes: 8,
+        });
+      });
+  })
+  test('should return status 404 with a msg if id not found', () => { 
+    return request(app)
+      .patch("/api/reviews/9999999")
+      .send({ inc_votes: 1 })
+      .expect(404)
+      .then((res) => {
+        const msg = res.text;
+        expect(msg).toBe("Sorry can't find that!");
+      });
+  })
+  test("should return status 400 with a msg if id of wrong type", () => {
+    return request(app)
+      .patch("/api/reviews/lala")
+      .send({ inc_votes: 1 })
+      .expect(400)
+      .then((res) => {
+        const msg = res.text;
+        expect(msg).toBe("invalid type please check your input");
+      });
+  });
+  test.only("should return status 400 with a msg if body of wrong type", () => {
+    return request(app)
+      .patch("/api/reviews/lala")
+      .send({ inc_votes: "dskmkmdskds" })
+      .expect(400)
+      .then((res) => {
+        const msg = res.text;
+        expect(msg).toBe("invalid type please check your input");
+      });
+  });
+});
