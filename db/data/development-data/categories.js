@@ -1,4 +1,4 @@
-module.exports = [
+qqmodule.exports = [
   {
     slug: 'strategy',
     description:
