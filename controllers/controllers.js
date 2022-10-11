@@ -1,4 +1,8 @@
-const { getCategoriesM, getReviewsByIdM } = require("../models/models");
+const {
+  getCategoriesM,
+  getReviewsByIdM,
+  getUsersM,
+} = require("../models/models");
 
 exports.getCategoriesC = (req, res, next) => {
   getCategoriesM()
@@ -15,6 +19,17 @@ exports.getReviewsByIdC = (req, res, next) => {
   getReviewsByIdM(review_id)
     .then((review) => {
       res.status(200).send(review);
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.getUsersC = (req, res, next) => {
+  console.log("hi")
+  getUsersM()
+    .then((users) => {
+      res.status(200).send(users);
     })
     .catch((err) => {
       next(err);

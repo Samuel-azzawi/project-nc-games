@@ -19,3 +19,9 @@ exports.getReviewsByIdM = (id) => {
       return review[0];
     });
 };
+
+exports.getUsersM = () => {
+  return db.query(`SELECT * FROM users;`).then(({ rows: users }) => {
+    return users;
+  });
+}
