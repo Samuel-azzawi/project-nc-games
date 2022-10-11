@@ -1,5 +1,5 @@
 const express = require("express");
-const { getCategoriesC, getReviewsByIdC } = require("./controllers/controllers");
+const { getCategoriesC, getReviewsByIdC, getUsersC } = require("./controllers/controllers");
 const error_404_msg = "Sorry can't find that!";
 const error_400_msg = "invalid type please check your input"
 
@@ -8,6 +8,7 @@ app.use(express.json());
 
 app.get("/api/categories", getCategoriesC);
 app.get("/api/reviews/:review_id", getReviewsByIdC);
+app.get("/api/users",getUsersC);
 
 app.use((err, req, res, next) => {
   if (err.code === "22P02") {
