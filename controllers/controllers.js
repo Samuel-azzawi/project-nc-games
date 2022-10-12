@@ -51,11 +51,16 @@ exports.patchReviewVoteC = (req, res, next) => {
 
 exports.getReviewsC = (req, res, next) => {
   const category = req.query.category;
-  getReviewsM(category)
-    .then((review) => {
-      res.status(200).send({ review });
-    })
-    .catch((err) => {
-      next(err);
-    });
+  getCategoriesM(category).then(() => {
+    getReviewsM(category)
+      .then((review) => {
+        res.status(200).send({ review });
+      })
+      .catch((err) => {
+        next(err);
+      });
+  }).catch((err) => {
+    next(err)
+  })
+  
 };

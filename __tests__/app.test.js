@@ -190,6 +190,7 @@ describe("GET /api/reviews", () => {
       .expect(200)
       .then((res) => {
         const review = res.body.review;
+        expect(review.length).toBeGreaterThan(0);
         expect(Array.isArray(review)).toBeTruthy();
         expect(review).toBeSortedBy("created_at", {
           descending: true,
@@ -237,7 +238,17 @@ describe("GET /api/reviews", () => {
         });
       });
   });
-  test("should return status 404 if category was not found", () => {
+  test("should return status 200 and an empty array if no reviews in a specific category", () => {
+    return request(app)
+      .get("/api/reviews?category=children's games")
+      .expect(200)
+      .then((res) => {
+        const review = res.body.review;
+        expect(Array.isArray(review)).toBeTruthy();
+        expect(review.length).toBe(0);
+      });
+  });
+  test("should return status 404 if category dosnt exist", () => {
     return request(app)
       .get("/api/reviews?category=lala")
       .expect(404)

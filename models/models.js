@@ -1,8 +1,19 @@
 const { Pool } = require("pg");
 const db = require("../db/connection");
 
-exports.getCategoriesM = () => {
-  return db.query(`SELECT * FROM categories;`).then(({ rows: categories }) => {
+exports.getCategoriesM = (slug) => {
+  let mainQuery = `SELECT * FROM categories`;
+  if (slug) {
+    mainQuery += ` WHERE slug = $1`
+    return db.query(mainQuery, [slug]).then(({ rows: categories }) => {
+      console.log(categories)
+      if (categories.length === 0) {
+        return Promise.reject({status : 404})
+      }
+      return categories;
+    });
+  }
+  return db.query(mainQuery).then(({ rows: categories }) => {
     return categories;
   });
 };
@@ -55,9 +66,6 @@ exports.getReviewsM = (category) => {
 
   if (category) {
     return db.query(mainQuery, [category]).then(({ rows: review }) => {
-      if (review.length === 0) {
-        return Promise.reject({ status: 404 });
-      }
       return review;
     });
   }
