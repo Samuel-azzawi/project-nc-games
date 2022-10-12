@@ -3,6 +3,7 @@ const {
   getReviewsByIdM,
   getUsersM,
   patchReviewVoteM,
+  getReviewsM,
 } = require("../models/models");
 
 exports.getCategoriesC = (req, res, next) => {
@@ -29,7 +30,7 @@ exports.getReviewsByIdC = (req, res, next) => {
 exports.getUsersC = (req, res, next) => {
   getUsersM()
     .then((users) => {
-      res.status(200).send({users});
+      res.status(200).send({ users });
     })
     .catch((err) => {
       next(err);
@@ -38,7 +39,7 @@ exports.getUsersC = (req, res, next) => {
 
 exports.patchReviewVoteC = (req, res, next) => {
   const id = req.params.review_id;
-  const inc_votes = req.body.inc_votes 
+  const inc_votes = req.body.inc_votes;
   patchReviewVoteM(id, inc_votes)
     .then((review) => {
       res.status(200).send({ review });
@@ -46,4 +47,20 @@ exports.patchReviewVoteC = (req, res, next) => {
     .catch((err) => {
       next(err);
     });
+};
+
+exports.getReviewsC = (req, res, next) => {
+  const category = req.query.category;
+  getCategoriesM(category).then(() => {
+    getReviewsM(category)
+      .then((review) => {
+        res.status(200).send({ review });
+      })
+      .catch((err) => {
+        next(err);
+      });
+  }).catch((err) => {
+    next(err)
+  })
+  
 };

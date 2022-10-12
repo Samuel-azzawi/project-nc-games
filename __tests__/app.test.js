@@ -71,7 +71,7 @@ describe("GET /api/reviews/:review_id", () => {
       .get("/api/reviews/999999")
       .expect(404)
       .then((res) => {
-        const msg = res.text
+        const msg = res.text;
         expect(msg).toBe("Sorry can't find that!");
       });
   });
@@ -107,13 +107,13 @@ describe("GET /api/users", () => {
 });
 
 describe("PATCH /api/reviews/:review_id", () => {
-  test('should return status 200 and the review with votes updated', () => { 
+  test("should return status 200 and the review with votes updated", () => {
     return request(app)
       .patch("/api/reviews/4")
       .send({ inc_votes: 1 })
       .expect(200)
       .then((res) => {
-        const review = res.body.review
+        const review = res.body.review;
         expect(review).toEqual({
           review_id: 4,
           title: "Dolor reprehenderit",
@@ -128,7 +128,7 @@ describe("PATCH /api/reviews/:review_id", () => {
           votes: 8,
         });
       });
-  })
+  });
   test("should return status 200 and the review with vote incremented by 0 (default) if no key was sent", () => {
     return request(app)
       .patch("/api/reviews/4")
@@ -151,7 +151,7 @@ describe("PATCH /api/reviews/:review_id", () => {
         });
       });
   });
-  test('should return status 404 with a msg if id not found', () => { 
+  test("should return status 404 with a msg if id not found", () => {
     return request(app)
       .patch("/api/reviews/9999999")
       .send({ inc_votes: 1 })
@@ -160,7 +160,7 @@ describe("PATCH /api/reviews/:review_id", () => {
         const msg = res.text;
         expect(msg).toBe("Sorry can't find that!");
       });
-  })
+  });
   test("should return status 400 with a msg if id of wrong type", () => {
     return request(app)
       .patch("/api/reviews/lala")
@@ -179,6 +179,82 @@ describe("PATCH /api/reviews/:review_id", () => {
       .then((res) => {
         const msg = res.text;
         expect(msg).toBe("invalid type please check your input");
+      });
+  });
+});
+
+describe("GET /api/reviews", () => {
+  test("should return status 200 and an array of all reviews sorted by creat date desc", () => {
+    return request(app)
+      .get("/api/reviews")
+      .expect(200)
+      .then((res) => {
+        const review = res.body.review;
+        expect(review.length).toBeGreaterThan(0);
+        expect(Array.isArray(review)).toBeTruthy();
+        expect(review).toBeSortedBy("created_at", {
+          descending: true,
+        });
+        review.forEach((index) => {
+          expect(index).toEqual(
+            expect.objectContaining({
+              review_id: expect.any(Number),
+              title: expect.any(String),
+              category: expect.any(String),
+              designer: expect.any(String),
+              owner: expect.any(String),
+              review_body: expect.any(String),
+              review_img_url: expect.any(String),
+              votes: expect.any(Number),
+              created_at: expect.any(String),
+              comment_count: expect.any(String),
+            })
+          );
+        });
+      });
+  });
+  test("should return status 200 and an array of all reviews in a specific category", () => {
+    return request(app)
+      .get("/api/reviews?category=social deduction")
+      .expect(200)
+      .then((res) => {
+        const review = res.body.review;
+        expect(Array.isArray(review)).toBeTruthy();
+        review.forEach((index) => {
+          expect(index).toEqual(
+            expect.objectContaining({
+              review_id: expect.any(Number),
+              title: expect.any(String),
+              category: "social deduction",
+              designer: expect.any(String),
+              owner: expect.any(String),
+              review_body: expect.any(String),
+              review_img_url: expect.any(String),
+              votes: expect.any(Number),
+              created_at: expect.any(String),
+              comment_count: expect.any(String),
+            })
+          );
+        });
+      });
+  });
+  test("should return status 200 and an empty array if no reviews in a specific category", () => {
+    return request(app)
+      .get("/api/reviews?category=children's games")
+      .expect(200)
+      .then((res) => {
+        const review = res.body.review;
+        expect(Array.isArray(review)).toBeTruthy();
+        expect(review.length).toBe(0);
+      });
+  });
+  test("should return status 404 if category dosnt exist", () => {
+    return request(app)
+      .get("/api/reviews?category=lala")
+      .expect(404)
+      .then((res) => {
+        const msg = res.text;
+        expect(msg).toBe("Sorry can't find that!");
       });
   });
 });

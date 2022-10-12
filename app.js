@@ -1,5 +1,5 @@
 const express = require("express");
-const { getCategoriesC, getReviewsByIdC, getUsersC, patchReviewVoteC } = require("./controllers/controllers");
+const { getCategoriesC, getReviewsByIdC, getUsersC, patchReviewVoteC, getReviewsC } = require("./controllers/controllers");
 const { status_code_errors, not_found } = require("./controllers/error-handeling");
 
 
@@ -9,6 +9,7 @@ app.use(express.json());
 app.get("/api/categories", getCategoriesC);
 app.get("/api/reviews/:review_id", getReviewsByIdC);
 app.get("/api/users", getUsersC);
+app.get("/api/reviews", getReviewsC);
 app.patch("/api/reviews/:review_id", patchReviewVoteC);
 
 app.use(status_code_errors);
