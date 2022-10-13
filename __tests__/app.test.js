@@ -183,7 +183,7 @@ describe("6-PATCH /api/reviews/:review_id", () => {
   });
 });
 
-describe("8-GET /api/reviews", () => {
+describe("8&11-GET /api/reviews", () => {
   test("should return status 200 and an array of all reviews sorted by creat date desc", () => {
     return request(app)
       .get("/api/reviews")
