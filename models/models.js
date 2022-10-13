@@ -64,21 +64,35 @@ RETURNING  *;`,
     });
 };
 
-exports.getReviewsM = (category) => {
+exports.getReviewsM = (category, sort_by = `created_at`, order = `desc`) => {
+  const validOrders = ["asc", "desc"];
+  const validSort_by = [
+    "created_at",
+    "votes",
+    "category",
+    "review_body",
+    "review_img_url",
+    "owner",
+    "designer",
+    "title",
+    "review_id",
+  ];
+  if (!validOrders.includes(order) || !validSort_by.includes(sort_by)) {
+    return Promise.reject({ status: 400 });
+  } 
+
   let mainQuery = `SELECT reviews.*, COUNT(comments) AS comment_count FROM reviews LEFT JOIN comments ON comments.review_id = reviews.review_id`;
 
   if (category) {
     mainQuery = mainQuery + ` WHERE reviews.category = $1`;
   }
-
-  mainQuery += ` GROUP BY reviews.review_id ORDER BY created_at DESC`;
-
+  
+  mainQuery += ` GROUP BY reviews.review_id ORDER BY ${sort_by} ${order}`;
   if (category) {
     return db.query(mainQuery, [category]).then(({ rows: review }) => {
       return review;
     });
   }
-
   return db.query(mainQuery).then(({ rows: review }) => {
     return review;
   });

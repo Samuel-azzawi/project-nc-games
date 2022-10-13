@@ -54,19 +54,20 @@ exports.patchReviewVoteC = (req, res, next) => {
 
 exports.getReviewsC = (req, res, next) => {
   const category = req.query.category;
-  getCategoriesM(category)
-    .then(() => {
-      getReviewsM(category)
-        .then((review) => {
-          res.status(200).send({ review });
-        })
-        .catch((err) => {
-          next(err);
-        });
-    })
-    .catch((err) => {
-      next(err);
-    });
+  const sort_by = req.query.sort_by
+  const order = req.query.order
+  getCategoriesM(category).then(() => {
+    getReviewsM(category,sort_by,order)
+      .then((review) => {
+        res.status(200).send({ review });
+      })
+      .catch((err) => {
+        next(err);
+      });
+  }).catch((err) => {
+    next(err)
+  })
+  
 };
 
 exports.getCommentsC = (req, res, next) => {
