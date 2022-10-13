@@ -4,11 +4,11 @@ const db = require("../db/connection");
 exports.getCategoriesM = (slug) => {
   let mainQuery = `SELECT * FROM categories`;
   if (slug) {
-    mainQuery += ` WHERE slug = $1`
+    mainQuery += ` WHERE slug = $1`;
     return db.query(mainQuery, [slug]).then(({ rows: categories }) => {
-      console.log(categories)
+      console.log(categories);
       if (categories.length === 0) {
-        return Promise.reject({status : 404})
+        return Promise.reject({ status: 404 });
       }
       return categories;
     });
@@ -55,22 +55,37 @@ RETURNING  *;`,
     });
 };
 
-exports.getReviewsM = (category) => {
+exports.getReviewsM = (category, sort_by = `created_at`, order = `desc`) => {
+  const validOrders = ["asc", "desc"];
+  const validSort_by = [
+    "created_at",
+    "votes",
+    "category",
+    "review_body",
+    "review_img_url",
+    "owner",
+    "designer",
+    "title",
+    "review_id",
+  ];
+
   let mainQuery = `SELECT reviews.*, COUNT(comments) AS comment_count FROM reviews LEFT JOIN comments ON comments.review_id = reviews.review_id`;
 
   if (category) {
     mainQuery = mainQuery + ` WHERE reviews.category = $1`;
   }
-
-  mainQuery += ` GROUP BY reviews.review_id ORDER BY created_at DESC`;
-
+  if (!validOrders.includes(order) || !validSort_by.includes(sort_by)) {
+    return Promise.reject({ status: 400});
+  } else {
+    mainQuery += ` GROUP BY reviews.review_id ORDER BY ${sort_by} ${order}`;
+  }
   if (category) {
-    return db.query(mainQuery, [category]).then(({ rows: review }) => {
+    return db.query(mainQuery, [category,sort_by,order]).then(({ rows: review }) => {
       return review;
     });
   }
-
-  return db.query(mainQuery).then(({ rows: review }) => {
+  return db.query(mainQuery, [sort_by]).then(({ rows: review }) => {
+    console.log(mainQuery);
     return review;
   });
 };
@@ -84,4 +99,4 @@ exports.getCommentsM = (id) => {
     .then(({ rows: comment }) => {
       return comment;
     });
-}
+};

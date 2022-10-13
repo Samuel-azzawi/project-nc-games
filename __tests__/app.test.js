@@ -184,7 +184,7 @@ describe("PATCH /api/reviews/:review_id", () => {
 });
 
 describe("GET /api/reviews", () => {
-  test("should return status 200 and an array of all reviews sorted by creat date desc", () => {
+  test.only("should return status 200 and an array of all reviews sorted by creat date desc", () => {
     return request(app)
       .get("/api/reviews")
       .expect(200)

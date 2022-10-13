@@ -52,6 +52,8 @@ exports.patchReviewVoteC = (req, res, next) => {
 
 exports.getReviewsC = (req, res, next) => {
   const category = req.query.category;
+ /*  const sort_by = req.query.sort_by
+  const order = req.query.order */
   getCategoriesM(category).then(() => {
     getReviewsM(category)
       .then((review) => {
