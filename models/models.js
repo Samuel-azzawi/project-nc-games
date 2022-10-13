@@ -6,7 +6,6 @@ exports.getCategoriesM = (slug) => {
   if (slug) {
     mainQuery += ` WHERE slug = $1`
     return db.query(mainQuery, [slug]).then(({ rows: categories }) => {
-      console.log(categories)
       if (categories.length === 0) {
         return Promise.reject({status : 404})
       }

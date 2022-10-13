@@ -88,21 +88,10 @@ exports.getCommentsC = (req, res, next) => {
 exports.postCommentsC = (req, res, next) => {
   const id = req.params.review_id;
   const { username, body } = req.body;
-  getReviewsByIdM(id)
-    .then(() => {
-      getUsersM(username)
-        .then(() => {
-          postCommentsM(id, username, body)
-            .then((comment) => {
-              res.status(201).send({ comment });
-            })
-            .catch((err) => {
-              next(err);
-            });
-        })
-        .catch((err) => {
-          next(err);
-        });
+
+  postCommentsM(id, username, body)
+    .then((comment) => {
+      res.status(201).send({ comment });
     })
     .catch((err) => {
       next(err);

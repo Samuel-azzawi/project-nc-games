@@ -310,7 +310,7 @@ describe("9-GET /api/reviews/:review_id/comments", () => {
       });
   });
 });
-describe.only("10-POST /api/reviews/:review_id/comments", () => {
+describe("10-POST /api/reviews/:review_id/comments", () => {
   test("should post the comment with the relevent review id", () => {
     return request(app)
       .post("/api/reviews/4/comments")
