@@ -74,9 +74,6 @@ exports.getCommentsM = (id) => {
       [id]
     )
     .then(({ rows: comment }) => {
-      if (comment.length === 0) {
-         return Promise.reject({ status: 404 });
-      }
       return comment;
     });
 }
