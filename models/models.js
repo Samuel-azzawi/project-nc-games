@@ -75,24 +75,23 @@ exports.getReviewsM = (category, sort_by = `created_at`, order = `desc`) => {
     "title",
     "review_id",
   ];
+  if (!validOrders.includes(order) || !validSort_by.includes(sort_by)) {
+    return Promise.reject({ status: 400 });
+  } 
 
   let mainQuery = `SELECT reviews.*, COUNT(comments) AS comment_count FROM reviews LEFT JOIN comments ON comments.review_id = reviews.review_id`;
 
   if (category) {
     mainQuery = mainQuery + ` WHERE reviews.category = $1`;
   }
-  if (!validOrders.includes(order) || !validSort_by.includes(sort_by)) {
-    return Promise.reject({ status: 400});
-  } else {
-    mainQuery += ` GROUP BY reviews.review_id ORDER BY ${sort_by} ${order}`;
-  }
+  
+  mainQuery += ` GROUP BY reviews.review_id ORDER BY ${sort_by} ${order}`;
   if (category) {
-    return db.query(mainQuery, [category,sort_by,order]).then(({ rows: review }) => {
+    return db.query(mainQuery, [category]).then(({ rows: review }) => {
       return review;
     });
   }
-  return db.query(mainQuery, [sort_by]).then(({ rows: review }) => {
-    console.log(mainQuery);
+  return db.query(mainQuery).then(({ rows: review }) => {
     return review;
   });
 };

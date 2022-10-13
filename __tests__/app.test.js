@@ -258,6 +258,36 @@ describe("8-GET /api/reviews", () => {
       });
   });
 });
+test("should return status 200 and an array of all reviews sorted by votes asc", () => {
+  return request(app)
+    .get("/api/reviews?sort_by=votes&&order=asc")
+    .expect(200)
+    .then((res) => {
+      const review = res.body.review;
+      expect(review.length).toBeGreaterThan(0);
+      expect(Array.isArray(review)).toBeTruthy();
+      expect(review).toBeSortedBy("votes", {
+        ascending: true,
+      });
+      review.forEach((index) => {
+        expect(index).toEqual(
+          expect.objectContaining({
+            review_id: expect.any(Number),
+            title: expect.any(String),
+            category: expect.any(String),
+            designer: expect.any(String),
+            owner: expect.any(String),
+            review_body: expect.any(String),
+            review_img_url: expect.any(String),
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+            comment_count: expect.any(String),
+          })
+        );
+      });
+    });
+});
+
 describe("9-GET /api/reviews/:review_id/comments", () => {
   test("should return an array of relevant comments", () => {
     return request(app)
