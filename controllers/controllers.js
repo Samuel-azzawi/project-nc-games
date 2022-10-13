@@ -5,6 +5,7 @@ const {
   patchReviewVoteM,
   getReviewsM,
   getCommentsM,
+  postCommentsM,
 } = require("../models/models");
 
 exports.getCategoriesC = (req, res, next) => {
@@ -52,22 +53,23 @@ exports.patchReviewVoteC = (req, res, next) => {
 
 exports.getReviewsC = (req, res, next) => {
   const category = req.query.category;
-  getCategoriesM(category).then(() => {
-    getReviewsM(category)
-      .then((review) => {
-        res.status(200).send({ review });
-      })
-      .catch((err) => {
-        next(err);
-      });
-  }).catch((err) => {
-    next(err)
-  })
-  
+  getCategoriesM(category)
+    .then(() => {
+      getReviewsM(category)
+        .then((review) => {
+          res.status(200).send({ review });
+        })
+        .catch((err) => {
+          next(err);
+        });
+    })
+    .catch((err) => {
+      next(err);
+    });
 };
 
-exports.getCommentsC = (req,res,next) => {
-  const id = req.params.review_id
+exports.getCommentsC = (req, res, next) => {
+  const id = req.params.review_id;
   getReviewsByIdM(id)
     .then(() => {
       getCommentsM(id)
@@ -81,5 +83,28 @@ exports.getCommentsC = (req,res,next) => {
     .catch((err) => {
       next(err);
     });
-  
-}
+};
+
+exports.postCommentsC = (req, res, next) => {
+  const id = req.params.review_id;
+  const { username, body } = req.body;
+  getReviewsByIdM(id)
+    .then(() => {
+      getUsersM(username)
+        .then(() => {
+          postCommentsM(id, username, body)
+            .then((comment) => {
+              res.status(201).send({ comment });
+            })
+            .catch((err) => {
+              next(err);
+            });
+        })
+        .catch((err) => {
+          next(err);
+        });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};

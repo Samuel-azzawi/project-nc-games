@@ -23,7 +23,7 @@ describe("invalid url", () => {
   });
 });
 
-describe("GET /api/categories", () => {
+describe("3-GET /api/categories", () => {
   test("should return status 200 and an array of all categories", () => {
     return request(app)
       .get("/api/categories")
@@ -43,7 +43,7 @@ describe("GET /api/categories", () => {
   });
 });
 
-describe("GET /api/reviews/:review_id", () => {
+describe("4&7-GET /api/reviews/:review_id", () => {
   test("should return status 200 and an array of all categories", () => {
     return request(app)
       .get("/api/reviews/3")
@@ -86,7 +86,7 @@ describe("GET /api/reviews/:review_id", () => {
   });
 });
 
-describe("GET /api/users", () => {
+describe("5-GET /api/users", () => {
   test("should return status 200 and an array of all users", () => {
     return request(app)
       .get("/api/users")
@@ -106,7 +106,7 @@ describe("GET /api/users", () => {
   });
 });
 
-describe("PATCH /api/reviews/:review_id", () => {
+describe("6-PATCH /api/reviews/:review_id", () => {
   test("should return status 200 and the review with votes updated", () => {
     return request(app)
       .patch("/api/reviews/4")
@@ -183,7 +183,7 @@ describe("PATCH /api/reviews/:review_id", () => {
   });
 });
 
-describe("GET /api/reviews", () => {
+describe("8-GET /api/reviews", () => {
   test("should return status 200 and an array of all reviews sorted by creat date desc", () => {
     return request(app)
       .get("/api/reviews")
@@ -258,7 +258,7 @@ describe("GET /api/reviews", () => {
       });
   });
 });
-describe("GET /api/reviews/:review_id/comments", () => {
+describe("9-GET /api/reviews/:review_id/comments", () => {
   test("should return an array of relevant comments", () => {
     return request(app)
       .get("/api/reviews/2/comments")
@@ -266,7 +266,7 @@ describe("GET /api/reviews/:review_id/comments", () => {
       .then((res) => {
         const comment = res.body.comment;
         expect(Array.isArray(comment)).toBeTruthy();
-        expect(comment.length).toBeGreaterThan(0)
+        expect(comment.length).toBeGreaterThan(0);
         comment.forEach((index) => {
           expect(index).toEqual(
             expect.objectContaining({
@@ -306,7 +306,70 @@ describe("GET /api/reviews/:review_id/comments", () => {
       .then((res) => {
         const comment = res.body.comment;
         expect(Array.isArray(comment)).toBeTruthy();
-        expect(comment.length).toBe(0)
+        expect(comment.length).toBe(0);
+      });
+  });
+});
+describe.only("10-POST /api/reviews/:review_id/comments", () => {
+  test("should post the comment with the relevent review id", () => {
+    return request(app)
+      .post("/api/reviews/4/comments")
+      .send({
+        username: "mallionaire",
+        body: "oooooooooh",
+      })
+      .expect(201)
+      .then((res) => {
+        const comment = res.body.comment;
+        expect(comment).toEqual(
+          expect.objectContaining({
+            review_id: 4,
+            comment_id: expect.any(Number),
+            body: "oooooooooh",
+            author: "mallionaire",
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+          })
+        );
+      });
+  });
+  test("should return 404 and a msg if review_id not found", () => {
+    return request(app)
+      .post("/api/reviews/9999/comments")
+      .send({
+        username: "mallionaire",
+        body: "oooooooooh",
+      })
+      .expect(404)
+      .then((res) => {
+        const msg = res.text;
+        expect(msg).toBe("Sorry can't find that!");
+      });
+  });
+  test("should return 400 and a msg if review_id of wrong type", () => {
+    return request(app)
+      .post("/api/reviews/haha/comments")
+      .send({
+        username: "mallionaire",
+        body: "oooooooooh",
+      })
+      .expect(400)
+      .then((res) => {
+        const msg = res.text;
+        expect(msg).toBe("invalid type please check your input");
+      });
+  });
+  test("should return 404 and a msg if username not found", () => {
+    return request(app)
+      .post("/api/reviews/4/comments")
+      .send({
+        username: "lala",
+        body: "oooooooooh",
+      })
+      .expect(404)
+      .then((res) => {
+        const msg = res.text;
+        expect(msg).toBe("Sorry can't find that!");
       });
   });
 });
