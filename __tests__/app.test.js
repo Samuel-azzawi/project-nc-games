@@ -258,3 +258,55 @@ describe("GET /api/reviews", () => {
       });
   });
 });
+describe("GET /api/reviews/:review_id/comments", () => {
+  test("should return an array of relevant comments", () => {
+    return request(app)
+      .get("/api/reviews/2/comments")
+      .expect(200)
+      .then((res) => {
+        const comment = res.body.comment;
+        expect(Array.isArray(comment)).toBeTruthy();
+        expect(comment.length).toBeGreaterThan(0)
+        comment.forEach((index) => {
+          expect(index).toEqual(
+            expect.objectContaining({
+              review_id: 2,
+              comment_id: expect.any(Number),
+              body: expect.any(String),
+              author: expect.any(String),
+              votes: expect.any(Number),
+              created_at: expect.any(String),
+            })
+          );
+        });
+      });
+  });
+  test("should return 404 with msg if id not found", () => {
+    return request(app)
+      .get("/api/reviews/9999/comments")
+      .expect(404)
+      .then((res) => {
+        const msg = res.text;
+        expect(msg).toBe("Sorry can't find that!");
+      });
+  });
+  test("should return 400 with msg if id of wrong type", () => {
+    return request(app)
+      .get("/api/reviews/lala/comments")
+      .expect(400)
+      .then((res) => {
+        const msg = res.text;
+        expect(msg).toBe("invalid type please check your input");
+      });
+  });
+  test("should return an empty array if no relevant comments", () => {
+    return request(app)
+      .get("/api/reviews/1/comments")
+      .expect(200)
+      .then((res) => {
+        const comment = res.body.comment;
+        expect(Array.isArray(comment)).toBeTruthy();
+        expect(comment.length).toBe(0)
+      });
+  });
+});

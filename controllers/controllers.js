@@ -4,6 +4,7 @@ const {
   getUsersM,
   patchReviewVoteM,
   getReviewsM,
+  getCommentsM,
 } = require("../models/models");
 
 exports.getCategoriesC = (req, res, next) => {
@@ -64,3 +65,21 @@ exports.getReviewsC = (req, res, next) => {
   })
   
 };
+
+exports.getCommentsC = (req,res,next) => {
+  const id = req.params.review_id
+  getReviewsByIdM(id)
+    .then(() => {
+      getCommentsM(id)
+        .then((comment) => {
+          res.status(200).send({ comment });
+        })
+        .catch((err) => {
+          next(err);
+        });
+    })
+    .catch((err) => {
+      next(err);
+    });
+  
+}
