@@ -373,3 +373,26 @@ describe("10-POST /api/reviews/:review_id/comments", () => {
       });
   });
 });
+describe.only("12-DELETE /api/comments/:comment_id", () => {
+  test("should delete the comment with the relevent id", () => {
+    return request(app).delete("/api/comments/1").expect(204);
+  });
+  test("should return 404  if the comment wasnt found", () => {
+    return request(app)
+      .delete("/api/comments/99999")
+      .expect(404)
+      .then((res) => {
+        const msg = res.text;
+        expect(msg).toBe("Sorry can't find that!");
+      });
+  });
+  test("should return 400  if the comment of wrong type", () => {
+    return request(app)
+      .delete("/api/comments/lala")
+      .expect(400)
+      .then((res) => {
+        const msg = res.text;
+        expect(msg).toBe("invalid type please check your input");
+      });
+  });
+});

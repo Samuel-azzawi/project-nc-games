@@ -6,6 +6,7 @@ const {
   getReviewsM,
   getCommentsM,
   postCommentsM,
+  deleteCommentsM,
 } = require("../models/models");
 
 exports.getCategoriesC = (req, res, next) => {
@@ -96,4 +97,12 @@ exports.postCommentsC = (req, res, next) => {
     .catch((err) => {
       next(err);
     });
+};
+exports.deleteCommentsC = (req, res, next) => {
+  const id = req.params.comment_id;
+  deleteCommentsM(id).then(() => {
+    res.status(204).send();
+  }).catch((err) => {
+    next(err);
+  });
 };

@@ -4,10 +4,10 @@ const db = require("../db/connection");
 exports.getCategoriesM = (slug) => {
   let mainQuery = `SELECT * FROM categories`;
   if (slug) {
-    mainQuery += ` WHERE slug = $1`
+    mainQuery += ` WHERE slug = $1`;
     return db.query(mainQuery, [slug]).then(({ rows: categories }) => {
       if (categories.length === 0) {
-        return Promise.reject({status : 404})
+        return Promise.reject({ status: 404 });
       }
       return categories;
     });
@@ -33,12 +33,14 @@ exports.getReviewsByIdM = (id) => {
 
 exports.getUsersM = (username) => {
   if (username) {
-    return db.query(`SELECT * FROM users WHERE username = $1`, [username]).then(({ rows: users }) => {
-      if (users.length === 0) {
-        return Promise.reject({status : 404})
-      }
-      return users;
-    });
+    return db
+      .query(`SELECT * FROM users WHERE username = $1`, [username])
+      .then(({ rows: users }) => {
+        if (users.length === 0) {
+          return Promise.reject({ status: 404 });
+        }
+        return users;
+      });
   }
   return db.query(`SELECT * FROM users;`).then(({ rows: users }) => {
     return users;
@@ -91,15 +93,24 @@ exports.getCommentsM = (id) => {
     .then(({ rows: comment }) => {
       return comment;
     });
-}
+};
 
 exports.postCommentsM = (id, username, body) => {
-return db
-  .query(
-    `INSERT INTO comments (body,author, review_id) VALUES ($1,$2,$3) RETURNING *;`,
-    [body,username,id]
-  )
-  .then(({ rows: comment }) => {
-    return comment[0];
-  });
-}
+  return db
+    .query(
+      `INSERT INTO comments (body,author, review_id) VALUES ($1,$2,$3) RETURNING *;`,
+      [body, username, id]
+    )
+    .then(({ rows: comment }) => {
+      return comment[0];
+    });
+};
+
+exports.deleteCommentsM = (id) => {
+  return db
+    .query(`DELETE FROM comments WHERE comments.comment_id = $1 RETURNING *`, [id]).then(({ rows: comment }) => { 
+      if (comment.length === 0) { 
+        return Promise.reject({ status: 404 });
+      }
+    })
+};
