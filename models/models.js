@@ -6,7 +6,6 @@ exports.getCategoriesM = (slug) => {
   if (slug) {
     mainQuery += ` WHERE slug = $1`
     return db.query(mainQuery, [slug]).then(({ rows: categories }) => {
-      console.log(categories)
       if (categories.length === 0) {
         return Promise.reject({status : 404})
       }
@@ -32,7 +31,15 @@ exports.getReviewsByIdM = (id) => {
     });
 };
 
-exports.getUsersM = () => {
+exports.getUsersM = (username) => {
+  if (username) {
+    return db.query(`SELECT * FROM users WHERE username = $1`, [username]).then(({ rows: users }) => {
+      if (users.length === 0) {
+        return Promise.reject({status : 404})
+      }
+      return users;
+    });
+  }
   return db.query(`SELECT * FROM users;`).then(({ rows: users }) => {
     return users;
   });
@@ -84,4 +91,15 @@ exports.getCommentsM = (id) => {
     .then(({ rows: comment }) => {
       return comment;
     });
+}
+
+exports.postCommentsM = (id, username, body) => {
+return db
+  .query(
+    `INSERT INTO comments (body,author, review_id) VALUES ($1,$2,$3) RETURNING *;`,
+    [body,username,id]
+  )
+  .then(({ rows: comment }) => {
+    return comment[0];
+  });
 }

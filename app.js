@@ -1,5 +1,5 @@
 const express = require("express");
-const { getCategoriesC, getReviewsByIdC, getUsersC, patchReviewVoteC, getReviewsC, getCommentsC } = require("./controllers/controllers");
+const { getCategoriesC, getReviewsByIdC, getUsersC, patchReviewVoteC, getReviewsC, getCommentsC, postCommentsC } = require("./controllers/controllers");
 const { status_code_errors, not_found } = require("./controllers/error-handeling");
 
 
@@ -12,6 +12,7 @@ app.get("/api/users", getUsersC);
 app.get("/api/reviews", getReviewsC);
 app.patch("/api/reviews/:review_id", patchReviewVoteC);
 app.get("/api/reviews/:review_id/comments", getCommentsC);
+app.post("/api/reviews/:review_id/comments", postCommentsC);
 
 app.use(status_code_errors);
 app.use(not_found);
