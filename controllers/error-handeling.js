@@ -1,6 +1,5 @@
 const error_404_msg = "Sorry can't find that!";
 const error_400_msg = "invalid type please check your input";
-const server_error_msg = "trash server, trash code so you get an Error :)";
 
 exports.status_errors = (err, req, res, next) => {
   if (err.status === 404) {
