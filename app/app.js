@@ -18,6 +18,7 @@ const {
 } = require("../controllers/error-handeling");
 
 const app = express();
+
 app.use(express.json());
 //TASK 3
 app.get("/api/categories", getCategoriesC);
