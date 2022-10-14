@@ -9,6 +9,7 @@ const {
   postCommentsC,
   deleteCommentsC,
   getEndPointC,
+  mainPageC,
 } = require("../controllers/controllers");
 const {
   handlePathNotFound,
@@ -38,7 +39,7 @@ app.patch("/api/reviews/:review_id", patchReviewVoteC);
 app.delete("/api/comments/:comment_id", deleteCommentsC);
 // TASK 13
 app.get("/api", getEndPointC);
-
+app.get("",mainPageC)
 //ERROR HANDELING
 app.use(status_errors);
 app.use(code_errors);

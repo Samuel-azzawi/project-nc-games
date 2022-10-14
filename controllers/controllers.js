@@ -115,3 +115,8 @@ exports.getEndPointC = (req,res,next) => {
   })
 
 }
+
+exports.mainPageC = (req, res, next) => {
+  const mainPageMsg = "weclome to my page :)"
+  res.status(200).send(mainPageMsg);
+}
