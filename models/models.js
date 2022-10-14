@@ -1,5 +1,6 @@
 const { Pool } = require("pg");
 const db = require("../db/connection");
+const fs = require("fs/promises");
 
 exports.getCategoriesM = (slug) => {
   let mainQuery = `SELECT * FROM categories`;
@@ -79,14 +80,14 @@ exports.getReviewsM = (category, sort_by = `created_at`, order = `desc`) => {
   ];
   if (!validOrders.includes(order) || !validSort_by.includes(sort_by)) {
     return Promise.reject({ status: 400 });
-  } 
+  }
 
   let mainQuery = `SELECT reviews.*, COUNT(comments) AS comment_count FROM reviews LEFT JOIN comments ON comments.review_id = reviews.review_id`;
 
   if (category) {
     mainQuery = mainQuery + ` WHERE reviews.category = $1`;
   }
-  
+
   mainQuery += ` GROUP BY reviews.review_id ORDER BY ${sort_by} ${order}`;
   if (category) {
     return db.query(mainQuery, [category]).then(({ rows: review }) => {
@@ -122,9 +123,19 @@ exports.postCommentsM = (id, username, body) => {
 
 exports.deleteCommentsM = (id) => {
   return db
-    .query(`DELETE FROM comments WHERE comments.comment_id = $1 RETURNING *`, [id]).then(({ rows: comment }) => { 
-      if (comment.length === 0) { 
+    .query(`DELETE FROM comments WHERE comments.comment_id = $1 RETURNING *`, [
+      id,
+    ])
+    .then(({ rows: comment }) => {
+      if (comment.length === 0) {
         return Promise.reject({ status: 404 });
       }
-    })
+    });
+};
+exports.getEndPointM = () => {
+  return fs
+    .readFile(__dirname + "/../endpoints.json", "utf-8")
+    .then((endpoints) => {
+      return JSON.parse(endpoints);
+    });
 };
