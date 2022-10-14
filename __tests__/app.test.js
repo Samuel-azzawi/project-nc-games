@@ -257,37 +257,37 @@ describe("8&11-GET /api/reviews", () => {
         expect(msg).toBe("Sorry can't find that!");
       });
   });
-});
-test("should return status 200 and an array of all reviews sorted by votes asc", () => {
-  return request(app)
-    .get("/api/reviews?sort_by=votes&&order=asc")
-    .expect(200)
-    .then((res) => {
-      const review = res.body.review;
-      expect(review.length).toBeGreaterThan(0);
-      expect(Array.isArray(review)).toBeTruthy();
-      expect(review).toBeSortedBy("votes", {
-        ascending: true,
-      });
-      review.forEach((index) => {
-        expect(index).toEqual(
-          expect.objectContaining({
-            review_id: expect.any(Number),
-            title: expect.any(String),
-            category: expect.any(String),
-            designer: expect.any(String),
-            owner: expect.any(String),
-            review_body: expect.any(String),
-            review_img_url: expect.any(String),
-            votes: expect.any(Number),
-            created_at: expect.any(String),
-            comment_count: expect.any(String),
-          })
-        );
-      });
-    });
-});
 
+  test("should return status 200 and an array of all reviews sorted by votes asc", () => {
+    return request(app)
+      .get("/api/reviews?sort_by=votes&&order=asc")
+      .expect(200)
+      .then((res) => {
+        const review = res.body.review;
+        expect(review.length).toBeGreaterThan(0);
+        expect(Array.isArray(review)).toBeTruthy();
+        expect(review).toBeSortedBy("votes", {
+          ascending: true,
+        });
+        review.forEach((index) => {
+          expect(index).toEqual(
+            expect.objectContaining({
+              review_id: expect.any(Number),
+              title: expect.any(String),
+              category: expect.any(String),
+              designer: expect.any(String),
+              owner: expect.any(String),
+              review_body: expect.any(String),
+              review_img_url: expect.any(String),
+              votes: expect.any(Number),
+              created_at: expect.any(String),
+              comment_count: expect.any(String),
+            })
+          );
+        });
+      });
+  });
+});
 describe("9-GET /api/reviews/:review_id/comments", () => {
   test("should return status 200 and an array of relevant comments", () => {
     return request(app)
@@ -431,8 +431,140 @@ describe("13. GET /api", () => {
     return request(app)
       .get("/api")
       .expect(200)
-      .then((res) => { 
-        console.log(res.body.endPoints)
+      .then((res) => {
+        const endPoints = res.body.endPoints;
+        expect(endPoints).toEqual({
+          "GET /api": {
+            description:
+              "serves up a json representation of all the available endpoints of the api",
+          },
+          "GET /api/categories": {
+            description: "serves an array of all categories",
+            queries: [],
+            exampleResponse: {
+              categories: [
+                {
+                  description:
+                    "Players attempt to uncover each other's hidden role",
+                  slug: "Social deduction",
+                },
+              ],
+            },
+          },
+          "GET /api/reviews": {
+            description: "serves an array of all reviews",
+            queries: ["category", "sort_by", "order"],
+            exampleResponse: {
+              reviews: [
+                {
+                  title: "One Night Ultimate Werewolf",
+                  designer: "Akihisa Okui",
+                  owner: "happyamy2016",
+                  review_img_url:
+                    "https://images.pexels.com/photos/5350049/pexels-photo-5350049.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+                  category: "hidden-roles",
+                  created_at: 1610964101251,
+                  votes: 5,
+                },
+              ],
+            },
+          },
+          "GET /api/users": {
+            description: "serves an array of all users",
+            queries: [],
+            exampleResponse: {
+              userObj: [
+                {
+                  username: "dav3rid",
+                  name: "dave",
+                  avatar_url:
+                    "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+                },
+              ],
+            },
+          },
+          "GET /api/reviews/:review_id": {
+            description: "serves an object of the specified review_id",
+            params: ["review_id"],
+            exampleResponse: {
+              review: {
+                review_id: 3,
+                title: "Ultimate Werewolf",
+                category: "social deduction",
+                designer: "Akihisa Okui",
+                owner: "bainesface",
+                review_body: "We couldn't find the werewolf!",
+                review_img_url:
+                  "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+                created_at: "2021-01-18T10:01:41.251Z",
+                votes: 5,
+                comment_count: "3",
+              },
+            },
+          },
+          "GET /api/reviews/:review_id/comments": {
+            description:
+              "serves an array of comments for the specified review_id",
+            params: ["review_id"],
+            exampleResponse: {
+              review: {
+                comment_id: 4,
+                body: "EPIC board game!",
+                review_id: 2,
+                author: "bainesface",
+                votes: 16,
+                created_at: "2017-11-22T12:36:03.389Z",
+              },
+            },
+          },
+          "POST /api/reviews/:review_id/comments": {
+            description:
+              "serves an object of the comment posted for a specified review_id",
+            params: ["review_id"],
+            body: [
+              {
+                username: "username",
+                body: "comment to post",
+              },
+            ],
+            exampleResponse: {
+              comment: {
+                comment_id: 7,
+                body: "oooooooooh",
+                review_id: 4,
+                author: "mallionaire",
+                votes: 0,
+                created_at: "2022-10-14T09:39:06.768Z",
+              },
+            },
+          },
+          "PATCH /api/reviews/:review_id": {
+            description:
+              "serves an object of the review that was patched in a specified review_id",
+            params: ["review_id"],
+            body: { inc_votes: "number of votes to add or deduct" },
+            exampleResponse: {
+              review: {
+                review_id: 4,
+                title: "Dolor reprehenderit",
+                category: "social deduction",
+                designer: "Gamey McGameface",
+                owner: "mallionaire",
+                review_body:
+                  "Consequat velit occaecat voluptate do. Dolor pariatur fugiat sint et proident ex do consequat est. Nisi minim laboris mollit cupidatat et adipisicing laborum do. Sint sit tempor officia pariatur duis ullamco labore ipsum nisi voluptate nulla eu veniam. Et do ad id dolore id cillum non non culpa. Cillum mollit dolor dolore excepteur aliquip. Cillum aliquip quis aute enim anim ex laborum officia. Aliqua magna elit reprehenderit Lorem elit non laboris irure qui aliquip ad proident. Qui enim mollit Lorem labore eiusmod",
+                review_img_url:
+                  "https://images.pexels.com/photos/278918/pexels-photo-278918.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+                created_at: "2021-01-22T11:35:50.936Z",
+                votes: 8,
+              },
+            },
+          },
+          "DELETE /api/comments/:comment_id": {
+            description: "deletes a comment from database",
+            params: ["comment_id"],
+            exampleResponse: {},
+          },
+        });
       })
   });
 });

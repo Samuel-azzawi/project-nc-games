@@ -1,6 +1,11 @@
 const express = require("express");
 const { getCategoriesC, getReviewsByIdC, getUsersC, patchReviewVoteC, getReviewsC, getCommentsC, postCommentsC, deleteCommentsC, getEndPointC } = require("./controllers/controllers");
-const { status_code_errors, not_found } = require("./controllers/error-handeling");
+const {
+  handlePathNotFound,
+  status_errors,
+  code_errors,
+  server_errors,
+} = require("./controllers/error-handeling");
 
 
 const app = express();
@@ -24,10 +29,10 @@ app.delete("/api/comments/:comment_id", deleteCommentsC);
 // TASK 13  
 app.get("/api", getEndPointC);
 
-// ERROR CODE OR STATUS HANDELING
-app.use(status_code_errors);
-
-// NO ERROR BUT NO RESULTS
-app.use(not_found);
+//ERROR HANDELING
+app.use(status_errors);
+app.use(code_errors);
+app.use(server_errors);
+app.use(handlePathNotFound);
 
 module.exports = app;
