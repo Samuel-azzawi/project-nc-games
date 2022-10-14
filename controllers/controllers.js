@@ -7,6 +7,7 @@ const {
   getCommentsM,
   postCommentsM,
   deleteCommentsM,
+  getEndPointM,
 } = require("../models/models");
 
 exports.getCategoriesC = (req, res, next) => {
@@ -107,3 +108,10 @@ exports.deleteCommentsC = (req, res, next) => {
     next(err);
   });
 };
+
+exports.getEndPointC = (req,res,next) => {
+  getEndPointM().then((endPoints) => {
+    res.status(200).send({endPoints});
+  })
+
+}

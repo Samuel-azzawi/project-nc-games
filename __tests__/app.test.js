@@ -44,7 +44,7 @@ describe("3-GET /api/categories", () => {
 });
 
 describe("4&7-GET /api/reviews/:review_id", () => {
-  test("should return status 200 and an array of all categories", () => {
+  test("should return status 200 and an array of all reviews", () => {
     return request(app)
       .get("/api/reviews/3")
       .expect(200)
@@ -289,7 +289,7 @@ test("should return status 200 and an array of all reviews sorted by votes asc",
 });
 
 describe("9-GET /api/reviews/:review_id/comments", () => {
-  test("should return an array of relevant comments", () => {
+  test("should return status 200 and an array of relevant comments", () => {
     return request(app)
       .get("/api/reviews/2/comments")
       .expect(200)
@@ -403,7 +403,7 @@ describe("10-POST /api/reviews/:review_id/comments", () => {
       });
   });
 });
-describe.only("12-DELETE /api/comments/:comment_id", () => {
+describe("12-DELETE /api/comments/:comment_id", () => {
   test("should delete the comment with the relevent id", () => {
     return request(app).delete("/api/comments/1").expect(204);
   });
@@ -424,5 +424,15 @@ describe.only("12-DELETE /api/comments/:comment_id", () => {
         const msg = res.text;
         expect(msg).toBe("invalid type please check your input");
       });
+  });
+});
+describe("13. GET /api", () => {
+  test("should return 200 and JSON describing all the available endpoints on the API,", () => {
+    return request(app)
+      .get("/api")
+      .expect(200)
+      .then((res) => { 
+        console.log(res.body.endPoints)
+      })
   });
 });
