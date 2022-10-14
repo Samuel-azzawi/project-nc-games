@@ -1,12 +1,21 @@
 const express = require("express");
-const { getCategoriesC, getReviewsByIdC, getUsersC, patchReviewVoteC, getReviewsC, getCommentsC, postCommentsC, deleteCommentsC, getEndPointC } = require("./controllers/controllers");
+const {
+  getCategoriesC,
+  getReviewsByIdC,
+  getUsersC,
+  patchReviewVoteC,
+  getReviewsC,
+  getCommentsC,
+  postCommentsC,
+  deleteCommentsC,
+  getEndPointC,
+} = require("../controllers/controllers");
 const {
   handlePathNotFound,
   status_errors,
   code_errors,
   server_errors,
-} = require("./controllers/error-handeling");
-
+} = require("../controllers/error-handeling");
 
 const app = express();
 app.use(express.json());
@@ -26,7 +35,7 @@ app.post("/api/reviews/:review_id/comments", postCommentsC);
 app.patch("/api/reviews/:review_id", patchReviewVoteC);
 // TASK 12
 app.delete("/api/comments/:comment_id", deleteCommentsC);
-// TASK 13  
+// TASK 13
 app.get("/api", getEndPointC);
 
 //ERROR HANDELING
