@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 const {
   getCategoriesC,
   getReviewsByIdC,
@@ -19,7 +20,7 @@ const {
 } = require("../controllers/error-handeling");
 
 const app = express();
-
+app.use(cors());
 app.use(express.json());
 //TASK 3
 app.get("/api/categories", getCategoriesC);
